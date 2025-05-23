@@ -11,7 +11,7 @@ export default function Navbar({
     <nav className="navbar">
       <div className="container nav-container">
         <a href="#" className="nav-brand" onClick={() => handleNavigation('profile')}>
-          <img src="logo-1.png" alt="Personal Dashboard Logo" />
+          <img src="/logo-1.png" alt=" Logo" />
           <span>Personal Dashboard</span>
         </a>
         
