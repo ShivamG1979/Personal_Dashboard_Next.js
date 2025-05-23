@@ -1,95 +1,99 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+
+import { useState, useEffect } from 'react'
+import Navbar from './components/Navbar'
+import Profile from './components/Profile'
+import Academics from './components/Academics'
+import Skills from './components/Skills'
+import Hobbies from './components/Hobbies'
+import Projects from './components/Projects'
+import Achievements from './components/Achievements'
+import Footer from './components/Footer'
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [activeSection, setActiveSection] = useState('profile'); 
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [theme, setTheme] = useState('light');
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Check for user's preferred theme
+    const userPrefersDark = window.matchMedia && 
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (userPrefersDark) {
+      setTheme('dark');
+    }
+    
+    // Initial checks
+    handleResize();
+    
+    // Add event listeners
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const handleNavigation = (section) => {
+    setActiveSection(section);
+    if (isMobile) {
+      setShowMobileMenu(false);
+    }
+    
+    // Smooth scroll to section
+    const element = document.getElementById(section);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const toggleMobileMenu = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  return (
+    <div className={`dashboard ${theme}`}>
+      <Navbar 
+        activeSection={activeSection} 
+        handleNavigation={handleNavigation}
+        isMobile={isMobile}
+        showMobileMenu={showMobileMenu}
+        toggleMobileMenu={toggleMobileMenu}
+        theme={theme}
+        toggleTheme={toggleTheme}
+      />
+      <div className="container main-content">
+        <section id="profile" className={activeSection === 'profile' ? 'section' : 'hidden'}>
+          <Profile />
+        </section>
+        <section id="academics" className={activeSection === 'academics' ? 'section' : 'hidden'}>
+          <Academics />
+        </section>
+        <section id="skills" className={activeSection === 'skills' ? 'section' : 'hidden'}>
+          <Skills />
+        </section>
+        <section id="projects" className={activeSection === 'projects' ? 'section' : 'hidden'}>
+          <Projects />
+        </section>
+        <section id="achievements" className={activeSection === 'achievements' ? 'section' : 'hidden'}>
+          <Achievements />
+        </section>
+        <section id="hobbies" className={activeSection === 'hobbies' ? 'section' : 'hidden'}>
+          <Hobbies />
+        </section>
+      </div>
+      <Footer />
     </div>
-  );
+  )
 }
